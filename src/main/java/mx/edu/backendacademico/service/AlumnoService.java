@@ -18,9 +18,11 @@ public class AlumnoService {
         this.repository = repository;
     }
 
-    public List<Alumno> listar() {
-        // Devuelve una instantánea de los alumnos desde el adaptador activo.
-        return repository.buscarTodos();
+    public List<Alumno> listar(EstatusAlumno estatus) {
+        // Sin filtro se conserva el contrato; con filtro, el Stream deriva una lista nueva.
+        var todos = repository.buscarTodos();
+        if (estatus == null) return todos;
+        return todos.stream().filter(a -> a.estatus() == estatus).toList();
     }
 
     public Alumno buscar(Long id) {
