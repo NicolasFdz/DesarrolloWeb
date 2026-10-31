@@ -31,3 +31,30 @@ POST {{baseUrl}}/alumnos
 Content-Type: application/json
 
 {"matricula":"A001","nombre":"Otra persona","correo":"otra@universidad.mx"}
+
+### 1. Datos inválidos: 400 con codigo=DATOS_INVALIDOS y lista de campos
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"","nombre":"A","correo":"no-es-correo"}
+
+### 2. JSON incompleto: 400 por lectura del mensaje
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"B001","nombre":"Ada"
+
+### 3. Id inexistente: 404
+GET {{baseUrl}}/alumnos/9999
+
+### 4a. Primera creación de B001: 201
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"B001","nombre":"Grace Hopper","correo":"grace@universidad.mx"}
+
+### 4b. Misma matrícula otra vez: 409
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+
+{"matricula":"B001","nombre":"Otra persona","correo":"otra@universidad.mx"}
