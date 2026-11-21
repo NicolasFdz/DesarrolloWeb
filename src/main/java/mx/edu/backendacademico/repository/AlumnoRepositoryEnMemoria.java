@@ -50,4 +50,9 @@ public class AlumnoRepositoryEnMemoria implements AlumnoRepository {
     public synchronized void eliminarPorId(Long id) {
         datos.remove(id);
     }
+
+    @Override
+    public synchronized Optional<Alumno> buscarPorMatricula(String matricula) {
+        return datos.values().stream().filter(a -> a.matricula().equalsIgnoreCase(matricula.strip())).findFirst();
+    }
 }

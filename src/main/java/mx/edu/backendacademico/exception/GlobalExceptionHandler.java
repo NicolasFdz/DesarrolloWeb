@@ -80,4 +80,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     public record CampoInvalido(String campo, String mensaje) { }
+
+    @ExceptionHandler(AccesoDenegadoException.class)
+    ProblemDetail accesoDenegado(AccesoDenegadoException ex) {
+        return problema(HttpStatus.FORBIDDEN, "ACCESO_DENEGADO", ex.getMessage());
+    }
+
 }

@@ -23,6 +23,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/saludo", "/openapi.yaml", "/error").permitAll()
                 .requestMatchers("/api/v1/csrf").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/v1/alumnos/**").hasAnyRole("ALUMNO", "DOCENTE", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/mi-expediente").hasRole("ALUMNO")
                 .requestMatchers("/api/v1/**").hasAnyRole("DOCENTE", "ADMIN")
                 .anyRequest().denyAll());
         // 3. Basic autentica credenciales; TLS protege su transporte fuera de localhost.
@@ -41,6 +42,7 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(
                 User.withUsername("alumno").password(encoder.encode("alumno123")).roles("ALUMNO").build(),
                 User.withUsername("docente").password(encoder.encode("docente123")).roles("DOCENTE").build(),
-                User.withUsername("admin").password(encoder.encode("admin123")).roles("ADMIN").build());
+                User.withUsername("admin").password(encoder.encode("admin123")).roles("ADMIN").build(),
+                User.withUsername("beto").password(encoder.encode("beto123")).roles("ALUMNO").build());
     }
 }

@@ -52,4 +52,9 @@ public class AlumnoService {
         buscar(id);
         repository.eliminarPorId(id);
     }
+
+    public Alumno buscarPorMatricula(String matricula) {
+        return repository.buscarPorMatricula(matricula).orElseThrow(() ->
+                new AlumnoNoEncontradoException("No hay expediente asociado a la cuenta autenticada"));
+    }
 }
