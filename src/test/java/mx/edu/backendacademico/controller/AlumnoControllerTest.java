@@ -11,6 +11,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import org.springframework.http.MediaType;
 @WebMvcTest(AlumnoController.class)
 @AutoConfigureMockMvc(addFilters=false)
 class AlumnoControllerTest {
@@ -28,5 +30,15 @@ class AlumnoControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.codigo").value("DATOS_INVALIDOS"));
         org.mockito.Mockito.verifyNoInteractions(service);
+    }
+    @Test void crearDevuelve201ConLocationDelRecursoCreado() throws Exception {
+        when(service.crear("A1", "Ada Lovelace", "ada@u.mx"))
+                .thenReturn(new Alumno(7L, "A1", "Ada Lovelace", "ada@u.mx", EstatusAlumno.ACTIVO));
+        mvc.perform(post("/api/v1/alumnos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"matricula\":\"A1\",\"nombre\":\"Ada Lovelace\",\"correo\":\"ada@u.mx\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/v1/alumnos/7"))
+                .andExpect(jsonPath("$.id").value(7));
     }
 }

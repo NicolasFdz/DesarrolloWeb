@@ -13,6 +13,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import mx.edu.backendacademico.exception.MatriculaDuplicadaException;
 
 @SpringBootTest
 @Testcontainers
@@ -44,5 +45,16 @@ class PostgresIntegrationTest {
         assertEquals("SIN_CUPO", llena.getCodigo());
         // Las llamadas anteriores pasaron por el proxy real y terminaron su transacción.
         assertEquals(1, inscripciones.countByMateriaId(materia.getId()));
+    }
+    @Autowired AlumnoRepository repositorioDeDominio;
+
+    @Test void postgresRechazaUnaMatriculaRepetidaSinLaComprobacionPrevia() {
+        // Se usa el adaptador directamente: no ejecuta la comprobación previa del servicio,
+        // así que solo la restricción UNIQUE de PostgreSQL puede detener el duplicado.
+        repositorioDeDominio.guardar(new Alumno(null, "U900", "Ada", "ada@u.mx", EstatusAlumno.ACTIVO));
+        assertThrows(MatriculaDuplicadaException.class, () ->
+                repositorioDeDominio.guardar(new Alumno(null, "U900", "Otra", "otra@u.mx", EstatusAlumno.ACTIVO)));
+        assertEquals(1, repositorioDeDominio.buscarTodos().stream()
+                .filter(a -> a.matricula().equals("U900")).count());
     }
 }
